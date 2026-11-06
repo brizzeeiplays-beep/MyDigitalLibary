@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyDigitalLibary | My Collection</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navigation" aria-label="Main navigation">
+      <a class="logo" href="index.html">♡ MyDigitalLibary</a>
+      <span>My personal library</span>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="welcome">
+      <p class="eyebrow">YOUR PERSONAL COLLECTION</p>
+      <h1>My Library</h1>
+      <p>A little home for all the stories you love.</p>
+    </section>
+
+    <section class="stats" aria-label="Collection statistics">
+      <div class="stat-card"><p>Total Books</p><h2 id="total-books">0</h2></div>
+      <div class="stat-card"><p>Books Read</p><h2 id="books-read">0</h2></div>
+      <div class="stat-card"><p>Currently Reading</p><h2 id="currently-reading">0</h2></div>
+      <div class="stat-card"><p>Total Spent</p><h2 id="total-spent">$0.00</h2></div>
+      <div class="stat-card savings-card"><p>Savings / Overspending</p><h2 id="total-saved">$0.00</h2></div>
+      <div class="stat-card"><p>Total Current Value</p><h2 id="total-value">$0.00</h2></div>
+    </section>
+
+    <aside class="savings-guide" aria-labelledby="savings-guide-title">
+      <h2 id="savings-guide-title">How your savings are calculated</h2>
+      <p>Current Value Price − Price Paid. <strong>Positive (+)</strong> means your books are currently worth more than you paid. <strong>Negative (−)</strong> means you paid more than their current estimated value. This is a value comparison, not money earned from selling your books.</p>
+      <p id="savings-note" aria-live="polite">Enter Price Paid and Current Value Price to see the difference.</p>
+    </aside>
+
+    <section class="library-section">
+      <div class="section-header">
+        <div><h2>My Collection</h2><p id="collection-description">Your personal book collection</p></div>
+        <button id="add-book" class="primary-button" type="button">+ Add Book</button>
+      </div>
+
+      <div class="tools-bar">
+        <div class="backup-actions">
+          <button id="export-books" class="secondary-button" type="button">Export Backup</button>
+          <button id="import-books" class="secondary-button" type="button">Import Backup</button>
+          <input id="import-file" class="visually-hidden" type="file" accept=".json,application/json" aria-label="Choose JSON backup file">
+        </div>
+        <p class="backup-note">Save a backup before clearing browser data or changing devices.</p>
+      </div>
+      <p id="page-message" class="page-message" role="status" aria-live="polite"></p>
+
+      <!-- Phase 6: search, filter, sort, and themes -->
+      <section class="collection-controls" aria-label="Find and organize books">
+        <div class="control search-control">
+          <label for="search-books">Search your books</label>
+          <input id="search-books" type="search" placeholder="Search title, author, or series…" autocomplete="off">
+        </div>
+        <div class="control">
+          <label for="filter-status">Reading status</label>
+          <select id="filter-status">
+            <option value="all">All books</option>
+            <option value="Unread">Unread</option>
+            <option value="Reading">Currently reading</option>
+            <option value="Read">Read</option>
+          </select>
+        </div>
+        <div class="control">
+          <label for="sort-books">Sort books</label>
+          <select id="sort-books">
+            <option value="added-desc">Recently added</option>
+            <option value="added-asc">Oldest added</option>
+            <option value="series-volume" selected>Series → Volume (1, 2, 3…)</option>
+            <option value="volume-asc">Volume: low to high</option>
+            <option value="volume-desc">Volume: high to low</option>
+            <option value="title-asc">Title: A to Z (volumes in order)</option>
+            <option value="author-asc">Author: A to Z</option>
+            <option value="price-desc">Price paid: high to low</option>
+          </select>
+        </div>
+        <div class="control">
+          <label for="library-theme">Library theme</label>
+          <select id="library-theme">
+            <option value="minimal">Clean white</option>
+            <option value="sage">Soft sage</option>
+            <option value="blush">Warm blush</option>
+            <option value="midnight">Midnight</option>
+          </select>
+        </div>
+        <div class="control">
+          <label for="library-font">Library font</label>
+          <select id="library-font">
+            <option value="modern">Modern — Arial</option>
+            <option value="classic">Classic — Georgia</option>
+            <option value="rounded">Friendly — Trebuchet</option>
+            <option value="simple">Clean — Verdana</option>
+            <option value="literary">Bookish — Palatino</option>
+          </select>
+        </div>
+      </section>
+      <div class="results-toolbar">
+        <p id="results-count" role="status" aria-live="polite">Showing all books</p>
+        <button id="clear-filters" class="text-button" type="button">Clear search & filters</button>
+      </div>
+      <div id="book-container" class="book-container grid-mode"></div>
+    </section>
+  </main>
+
+  <!-- Add/edit window -->
+  <dialog id="book-dialog" aria-labelledby="form-title">
+    <form id="book-form">
+      <div class="form-heading">
+        <h2 id="form-title">Add a New Book</h2>
+        <button type="button" id="close-dialog" class="close-button" aria-label="Close">×</button>
+      </div>
+      <label for="book-title">Book Title *</label>
+      <input id="book-title" type="text" maxlength="120" required>
+      <label for="book-author">Author</label>
+      <input id="book-author" type="text" maxlength="100">
+      <label for="book-series">Series</label>
+      <input id="book-series" type="text" maxlength="100" placeholder="e.g. Manga series name">
+      <label for="book-volume">Volume Number</label>
+      <input id="book-volume" type="number" min="0" step="1" placeholder="1">
+      <label for="book-price">Price Paid ($)</label>
+      <input id="book-price" type="number" min="0" step="0.01" placeholder="11.99">
+      <label for="book-value">Current Value Price ($) — optional</label>
+      <input id="book-value" type="number" min="0" step="0.01" placeholder="Current estimated value">
+      <p class="field-hint">Enter what you estimate the book is worth now. It does not update automatically.</p>
+      <label for="book-status">Reading Status</label>
+      <select id="book-status">
+        <option value="Unread">Unread</option>
+        <option value="Reading">Currently Reading</option>
+        <option value="Read">Read</option>
+      </select>
+      <h3 class="design-heading">Front Cover Image</h3>
+      <p class="field-hint">Your uploaded or linked front-cover artwork appears in your collection grid and book details.</p>
+      <div class="cover-input-section">
+        <h4>Actual Front Cover</h4>
+        <p class="field-hint">Shown in your book grid and Book Details.</p>
+        <label for="book-cover-url">Option 1 — Paste a direct image link</label>
+        <input id="book-cover-url" type="url" placeholder="https://example.com/manga-cover.jpg" autocomplete="off">
+        <p class="field-hint">Paste a direct HTTPS JPG, PNG, or WebP image URL — not an Amazon product-page link.</p>
+        <label for="book-cover">Option 2 — Upload a cover from your computer</label>
+        <input id="book-cover" type="file" accept="image/png,image/jpeg,image/webp">
+        <p class="field-hint" id="cover-help">Upload a JPG, PNG, or WebP under 8 MB. Uploaded images are compressed and included in your JSON backup. A selected file takes priority over the pasted URL.</p>
+        <div class="cover-preview" id="cover-preview" hidden>
+          <img id="cover-preview-image" alt="Front cover preview">
+          <p id="cover-preview-message" role="status"></p>
+        </div>
+        <label class="inline-checkbox" id="remove-cover-row" hidden><input type="checkbox" id="remove-cover"> Remove current cover image</label>
+      </div>
+      <p id="form-error" class="form-error" role="alert"></p>
+      <div class="form-actions">
+        <button type="button" id="cancel-book" class="secondary-button">Cancel</button>
+        <button type="submit" id="save-book" class="primary-button">Save Book</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Book details window -->
+  <dialog id="details-dialog" aria-labelledby="details-title">
+    <div class="form-heading">
+      <h2 id="details-title">Book Details</h2>
+      <button type="button" id="close-details" class="close-button" aria-label="Close">×</button>
+    </div>
+    <div id="details-content"></div>
+    <div class="form-actions details-actions">
+      <button type="button" id="delete-book" class="danger-button">Delete Book</button>
+      <button type="button" id="edit-book" class="primary-button">Edit Book</button>
+    </div>
+  </dialog>
+
+  <footer><p>MyDigitalLibary ♡ Made for book lovers</p></footer>
+</body>
+</html>
